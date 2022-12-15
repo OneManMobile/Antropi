@@ -26,12 +26,11 @@ class WorldTransformer {
         }
 
 
-        if(ant.x < 0 || ant.x >= world.grid.size)
+        if(ant.x < 0 || ant.x > world.grid.lastIndex)
             return null
 
-        if(ant.y < 0 || ant.y >= world.grid.size)
+        if(ant.y < 0 || ant.y > world.grid.lastIndex)
             return null
-
 
 
         return if(oldAnt.swapOnMove){

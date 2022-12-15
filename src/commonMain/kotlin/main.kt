@@ -39,7 +39,7 @@ class MyScene : Scene() {
 		while (true) {
             drawWorld(lastWorld)
             lastWorld = GetWorldThatCreateHighestPotentialEntropyUseCase().execute(lastWorld)
-            delay(3000.milliseconds)
+            delay(250.milliseconds)
         }
 	}
 

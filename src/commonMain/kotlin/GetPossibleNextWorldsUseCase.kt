@@ -4,13 +4,14 @@ class GetPossibleNextWorldsUseCase {
 
     val worldTransformer = WorldTransformer()
 
-     fun execute(world: World): List<World> {
+     fun execute(world: World, take: Int = 9): Set<World> {
 
         // move
         val nextWorld = worldTransformer.moveAnt(world)
 
-        if(nextWorld == null)
-            return emptyList()
+        if(nextWorld == null) {
+            return emptySet()
+        }
 
         return listOf(
             newWorldDirection(nextWorld, Direction.Up, false),
@@ -22,8 +23,7 @@ class GetPossibleNextWorldsUseCase {
             newWorldDirection(nextWorld, Direction.Down, true),
             newWorldDirection(nextWorld, Direction.Left, true),
             newWorldDirection(nextWorld, Direction.Right, true),
-        ).filterNotNull()
-
+        ).filterNotNull().shuffled().take(take).toSet()
     }
 
     private fun newWorldDirection(nextWorld: World, direction: Direction?, swapOnMove: Boolean): World? {
@@ -34,6 +34,18 @@ class GetPossibleNextWorldsUseCase {
             return null
 
         if(nextWorldAnt.y < 0 || nextWorldAnt.y >= nextWorld.grid.size)
+            return null
+
+        if(nextWorldAnt.x == 0 && nextWorldAnt.nextMove == Direction.Left)
+            return null
+
+        if(nextWorldAnt.x == nextWorld.grid.lastIndex && nextWorldAnt.nextMove == Direction.Right)
+            return null
+
+        if(nextWorldAnt.y == 0 && nextWorldAnt.nextMove == Direction.Up)
+            return null
+
+        if(nextWorldAnt.y == nextWorld.grid.lastIndex && nextWorldAnt.nextMove == Direction.Down)
             return null
 
         return nextWorld.copy(
