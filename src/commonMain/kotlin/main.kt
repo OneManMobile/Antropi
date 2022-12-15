@@ -1,35 +1,81 @@
 import com.soywiz.klock.*
+import com.soywiz.klogger.*
 import com.soywiz.korge.*
+import com.soywiz.korge.input.*
 import com.soywiz.korge.scene.*
 import com.soywiz.korge.tween.*
 import com.soywiz.korge.view.*
+import com.soywiz.korge.view.tween.*
 import com.soywiz.korim.color.*
 import com.soywiz.korim.format.*
 import com.soywiz.korio.file.std.*
 import com.soywiz.korma.geom.*
 import com.soywiz.korma.interpolation.*
+import model.*
+import java.awt.*
 
-suspend fun main() = Korge(width = 512, height = 512, bgcolor = Colors["#2b2b2b"]) {
+const val WIDTH = 512
+const val HEIGHT = 512
+
+
+suspend fun main() = Korge(width = WIDTH, height = HEIGHT, bgcolor = Colors["#FFFFFF"], title = "Antropi") {
 	val sceneContainer = sceneContainer()
 
 	sceneContainer.changeTo({ MyScene() })
 }
 
 class MyScene : Scene() {
+
 	override suspend fun SContainer.sceneMain() {
-		val minDegrees = (-16).degrees
-		val maxDegrees = (+16).degrees
 
-		val image = image(resourcesVfs["korge.png"].readBitmap()) {
-			rotation = maxDegrees
-			anchor(.5, .5)
-			scale(0.8)
-			position(256, 256)
-		}
+        var world = GenerateWorldUsecase().execute(WorldRequest(
+            5,
+            listOf(Color.RED, Color.BLUE, Color.GREEN),
+            backgroundColor = Color.WHITE,
+            backgroundProminence = 0.5f
+        ))
 
+        var lastWorld = world
 		while (true) {
-			image.tween(image::rotation[minDegrees], time = 1.seconds, easing = Easing.EASE_IN_OUT)
-			image.tween(image::rotation[maxDegrees], time = 1.seconds, easing = Easing.EASE_IN_OUT)
-		}
+            drawWorld(lastWorld)
+            lastWorld = GetWorldThatCreateHighestPotentialEntropyUseCase().execute(lastWorld)
+            delay(3000.milliseconds)
+        }
 	}
+
+    private fun SContainer.drawWorld(world: World) {
+        val size = world.grid.size
+        val ant = world.ant
+
+        for (i in 0 until size)
+            for (j in 0 until size) {
+
+                val ellipse = ellipse {
+                    radiusX = (WIDTH / (size * 2)).toDouble()
+                    radiusY = (HEIGHT / (size * 2)).toDouble()
+
+                    anchor(0.5, 0.5)
+                    color = RGBA(world.grid[i][j])
+
+                    val xPos = (WIDTH / size) * i + ((WIDTH / size) * 0.5)
+                    val yPos = (HEIGHT / size) * j + ((HEIGHT / size) * 0.5)
+
+                    position(xPos, yPos)
+                }
+
+            }
+
+        val antEllipse = ellipse {
+            radiusX = (WIDTH / (size * 3)).toDouble()
+            radiusY = (HEIGHT / (size * 3)).toDouble()
+
+            anchor(0.5, 0.5)
+            color = RGBA(RGBA(0, 0, 0, 220))
+
+            val xPos = (WIDTH / size) * ant.y + ((WIDTH / size) * 0.5)
+            val yPos = (HEIGHT / size) * ant.x + ((HEIGHT / size) * 0.5)
+
+            position(xPos, yPos)
+        }
+    }
 }
