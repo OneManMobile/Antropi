@@ -8,7 +8,7 @@ class GetWorldThatCreateHighestPotentialEntropyUseCase {
     val getPossibleNextWorldsUseCase = GetPossibleNextWorldsUseCase()
 
     companion object{
-        const val REACH = 9
+        const val REACH = 12
     }
 
     /**
@@ -28,13 +28,14 @@ class GetWorldThatCreateHighestPotentialEntropyUseCase {
 
         nextMoves.forEach { world ->
             val endWorlds = endComplexityFromPossibleMovesIn(setOf(world), REACH)
+            val endWorldGrids = endWorlds.map { it.grid }.toSet()
 
             val endMoves = if(endWorlds.isEmpty()) {
                 println("No Complexity found: " + world.toString())
                 Integer.MIN_VALUE
             }else {
-                println("endWorlds: " + endWorlds.size)
-                endWorlds.size
+                println("endWorlds: " + endWorldGrids.size)
+                endWorldGrids.size
             }
 
             if(endMoves > bestNextWorldComplexity){
