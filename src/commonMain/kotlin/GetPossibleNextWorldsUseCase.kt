@@ -4,7 +4,7 @@ class GetPossibleNextWorldsUseCase {
 
     val worldTransformer = WorldTransformer()
 
-     fun execute(world: World, take: Int = 9): Set<World> {
+     fun execute(world: WorldOld, take: Int = 9): Set<WorldOld> {
 
         // move
         val nextWorld = worldTransformer.moveAnt(world)
@@ -26,7 +26,7 @@ class GetPossibleNextWorldsUseCase {
         ).filterNotNull().shuffled().take(take).toSet()
     }
 
-    private fun newWorldDirection(nextWorld: World, direction: Direction?, swapOnMove: Boolean): World? {
+    private fun newWorldDirection(nextWorld: WorldOld, direction: Direction?, swapOnMove: Boolean): WorldOld? {
 
         val nextWorldAnt = nextWorld.ant
 

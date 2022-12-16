@@ -11,11 +11,11 @@ class GetMovesThatCreateHighestComplexityUseCaseOld {
     }
 
     data class Moves(
-        val worlds: List<World>,
+        val worlds: List<WorldOld>,
         val endComplexity: Int
     )
 
-    fun execute(input: World): Moves{
+    fun execute(input: WorldOld): Moves{
 
         val getMoves = getMoves(input, REACH)
 
@@ -26,13 +26,13 @@ class GetMovesThatCreateHighestComplexityUseCaseOld {
         }
     }
 
-    private fun getMoves(world: World, reach: Int): List<Moves> {
+    private fun getMoves(world: WorldOld, reach: Int): List<Moves> {
 
-        var list = listOf<List<World>>(listOf(world))
+        var list = listOf<List<WorldOld>>(listOf(world))
 
         for(i in 0..reach){
 
-            val newList = mutableListOf<List<World>>()
+            val newList = mutableListOf<List<WorldOld>>()
 
             list.forEach { currentMoves ->
 

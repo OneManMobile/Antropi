@@ -2,7 +2,7 @@ package model
 
 class WorldTransformer {
 
-    fun moveAnt(world: World): World?{
+    fun moveAnt(world: WorldOld): WorldOld?{
 
         val oldAnt = world.ant
 

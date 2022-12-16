@@ -1,17 +1,10 @@
 import com.soywiz.klock.*
-import com.soywiz.klogger.*
 import com.soywiz.korge.*
-import com.soywiz.korge.input.*
 import com.soywiz.korge.scene.*
-import com.soywiz.korge.tween.*
 import com.soywiz.korge.view.*
-import com.soywiz.korge.view.tween.*
 import com.soywiz.korim.color.*
-import com.soywiz.korim.format.*
-import com.soywiz.korio.file.std.*
-import com.soywiz.korma.geom.*
-import com.soywiz.korma.interpolation.*
 import model.*
+import usecase.*
 import java.awt.*
 
 const val WIDTH = 512
@@ -29,7 +22,7 @@ class MyScene : Scene() {
 	override suspend fun SContainer.sceneMain() {
 
         var world = GenerateWorldUsecase().execute(WorldRequest(
-            5,
+            25,
             listOf(Color.RED, Color.BLUE, Color.GREEN),
             backgroundColor = Color.WHITE,
             backgroundProminence = 0.5f
@@ -38,7 +31,7 @@ class MyScene : Scene() {
         var lastWorld = world
 		while (true) {
             drawWorld(lastWorld)
-            lastWorld = GetWorldThatCreateHighestPotentialEntropyUseCase().execute(lastWorld)
+            lastWorld = GetNextWorldUseCase().execute(lastWorld)
             delay(250.milliseconds)
         }
 	}
@@ -48,7 +41,7 @@ class MyScene : Scene() {
         val ant = world.ant
 
         for (i in 0 until size)
-            for (j in 0 until size) {
+            for (j in 0 until size){
 
                 val ellipse = ellipse {
                     radiusX = (WIDTH / (size * 2)).toDouble()
@@ -72,8 +65,8 @@ class MyScene : Scene() {
             anchor(0.5, 0.5)
             color = RGBA(RGBA(0, 0, 0, 220))
 
-            val xPos = (WIDTH / size) * ant.y + ((WIDTH / size) * 0.5)
-            val yPos = (HEIGHT / size) * ant.x + ((HEIGHT / size) * 0.5)
+            val xPos = (WIDTH / size) * ant.x + ((WIDTH / size) * 0.5)
+            val yPos = (HEIGHT / size) * ant.y + ((HEIGHT / size) * 0.5)
 
             position(xPos, yPos)
         }

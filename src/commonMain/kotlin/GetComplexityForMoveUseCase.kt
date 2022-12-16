@@ -8,7 +8,7 @@ class GetComplexityForMoveUseCase {
 
     var calculationsMade = 0
 
-    fun execute(input: World, reach: Int): Int{
+    fun execute(input: WorldOld, reach: Int): Int{
 
         if(reach == 0){
             val complexityFoundForMove = complexityService.getComplexity(input.grid)

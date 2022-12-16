@@ -1,5 +1,4 @@
 
-import com.soywiz.korma.random.*
 import model.*
 import kotlin.random.*
 
@@ -18,13 +17,13 @@ class GetWorldThatCreateHighestPotentialEntropyUseCase {
      * 4. In other words, choose the next world which allows maximum future entropy generation
      * 5. Define Maximum future entropy generation as the maximum average entropy across all end-paths within reach from the next step
      */
-    fun execute(input: World): World{
+    fun execute(input: WorldOld): WorldOld{
 
         val nextMoves = getPossibleNextWorldsUseCase.execute(input)
 
         var bestNextWorldComplexity = Integer.MIN_VALUE
-        var bestNextWorld: World? = null
-        var lastBestNextWorld: World? = null
+        var bestNextWorld: WorldOld? = null
+        var lastBestNextWorld: WorldOld? = null
 
         nextMoves.forEach { world ->
             val endWorlds = endComplexityFromPossibleMovesIn(setOf(world), REACH)
@@ -67,13 +66,13 @@ class GetWorldThatCreateHighestPotentialEntropyUseCase {
      * 5. Define Maximum future entropy generation as the maximum average entropy across all end-paths within reach from the next step
         */
      */
-    private fun endComplexityFromPossibleMovesIn(nextWorlds: Set<World>, reach: Int): Set<World> {
+    private fun endComplexityFromPossibleMovesIn(nextWorlds: Set<WorldOld>, reach: Int): Set<WorldOld> {
 
         if(reach == 0){
             return nextWorlds.toSet()
         }
 
-        val nextSet = mutableSetOf<World>()
+        val nextSet = mutableSetOf<WorldOld>()
 
         nextWorlds.forEach {
             val nextMoves = getPossibleNextWorldsUseCase.execute(it, reach)

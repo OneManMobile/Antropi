@@ -4,7 +4,7 @@ class GetNextMoveUseCase {
 
     val getPossibleNextWorldsUseCase = GetPossibleNextWorldsUseCase()
 
-    fun execute(input: World): World{
+    fun execute(input: WorldOld): WorldOld{
 
         val worldStates = getPossibleNextWorldsUseCase.execute(input)
 
