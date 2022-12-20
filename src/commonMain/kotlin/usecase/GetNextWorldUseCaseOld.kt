@@ -5,11 +5,14 @@ import GetPossibleNextWorldsUseCase
 import model.*
 import kotlin.random.*
 
-class GetNextWorldUseCase {
+class GetNextWorldUseCaseOld {
+
+    val complexityService = ComplexityService()
 
     companion object{
-        const val SAMPLE_PATHS = 100
-        const val STEPS = 50
+        const val TAU = 8
+        const val SAMPLES = 4
+        val nextWorldsMap = mutableMapOf<World, List<World>>()
     }
 
     /**
@@ -27,29 +30,9 @@ class GetNextWorldUseCase {
         // given step t+1, what is the access to entropy at Tau
 
         val bestWorld = getSetOfNextPossibleWorlds(input).maxBy { possibleNextWorld ->
+            val occurenceMap = mutableMapOf<World, Int>(Pair(possibleNextWorld,1))
 
-            val paths = mutableListOf<List<World>>()
-
-            for(i in 0..SAMPLE_PATHS){
-
-                val newPath = mutableListOf<World>()
-                var nextWorld = getSetOfNextPossibleWorlds(possibleNextWorld, 1).get(0)
-
-                for(j in 0..STEPS){
-                    newPath.add(nextWorld)
-                    nextWorld = getSetOfNextPossibleWorlds(nextWorld, 1).get(0)
-                }
-
-                paths.add(newPath)
-            }
-
-            val occurenceMap = mutableMapOf<World, Int>()
-            paths.forEach {
-                it.forEach {
-                    val currentCount = occurenceMap.get(it) ?: 0
-                    occurenceMap.put(it, currentCount +1)
-                }
-            }
+            getAccessibleEntropy(listOf(possibleNextWorld), TAU, occurenceMap)
 
             val allWorldOccurences = occurenceMap.values.reduce { acc, i -> acc + i }
 
@@ -70,6 +53,46 @@ class GetNextWorldUseCase {
 
     }
 
+    private fun getAccessibleEntropy(currentWorlds: List<World>, tau: Int, allWorldsOnPath: MutableMap<World, Int>): Int {
+
+        if(tau == 0){
+            //val accessibleEnropy = allWorldsOnPath.fold(0){ acc: Int, world: World ->
+            //    acc + complexityService.getComplexity(world.grid)
+            //}
+
+            //println("allWorldsOnPath: " + allWorldsOnPath.size)
+
+            // What is the probability of landing in a given world, given the next step
+            // And I suppose you want the probabilities to be as
+
+            return allWorldsOnPath.size
+        }
+
+        val nextWorlds = mutableListOf<World>()
+
+        currentWorlds.forEach { world ->
+
+            val entry = nextWorldsMap.get(world)
+            if(entry != null)
+                nextWorlds.addAll(entry)
+            else{
+                //always do every possible move with a swap and any move without in combination
+                val setOfNextPossibleWorlds = getSetOfNextPossibleWorlds(world, Random.nextInt(1, 9))
+                nextWorldsMap.put(world, setOfNextPossibleWorlds)
+                nextWorlds.addAll(setOfNextPossibleWorlds)
+            }
+        }
+
+        nextWorlds.forEach {
+            if(allWorldsOnPath.contains(it)){
+                allWorldsOnPath.put(it, allWorldsOnPath.get(it)!! + 1)
+            }else{
+                allWorldsOnPath.put(it,1)
+            }
+        }
+
+        return getAccessibleEntropy(nextWorlds, tau - 1, allWorldsOnPath)
+    }
 
     private fun getSetOfNextPossibleWorlds(world: World, sampleSizeMax: Int = Integer.MAX_VALUE): List<World> {
 
@@ -94,7 +117,7 @@ class GetNextWorldUseCase {
         return possibleWorlds.shuffled().take(sampleSizeMax)
     }
 
-    private fun addAntMovement(movedAnt: Ant, world: World): List<World>{
+    fun addAntMovement(movedAnt: Ant, world: World): List<World>{
 
         val ant = world.ant
 
