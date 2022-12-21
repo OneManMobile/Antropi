@@ -25,10 +25,10 @@ class MyScene : Scene() {
 	override suspend fun SContainer.sceneMain() {
 
         var world = GenerateWorldUsecase().execute(WorldRequest(
-            7,
+            11,
             listOf(Color.BLUE, Color.RED, Color.GREEN),
             backgroundColor = Color.WHITE,
-            backgroundProminence = 0.8f
+            backgroundProminence = 0.7f
         ))
 
         var lastWorld = world

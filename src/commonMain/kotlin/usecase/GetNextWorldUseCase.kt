@@ -9,7 +9,7 @@ class GetNextWorldUseCase {
 
     companion object{
         const val SAMPLE_PATHS = 100
-        const val STEPS = 250
+        const val STEPS = 50
 
         var lastEntropy = 0.0
     }
@@ -88,7 +88,7 @@ class GetNextWorldUseCase {
         val ant = world.ant
         val lastIndex = world.grid.lastIndex
 
-        val possibleWorlds = mutableListOf<World>()
+        val possibleWorlds = mutableListOf<World>(world)
 
         if(ant.x != 0){
             possibleWorlds.addAll(addAntMovement(ant.copy(x= ant.x - 1), world))
