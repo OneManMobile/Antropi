@@ -10,6 +10,8 @@ class GetNextWorldUseCase {
     companion object{
         const val SAMPLE_PATHS = 100
         const val STEPS = 50
+
+        var lastEntropy = 0.0
     }
 
     /**
@@ -28,46 +30,56 @@ class GetNextWorldUseCase {
 
         val bestWorld = getSetOfNextPossibleWorlds(input).maxBy { possibleNextWorld ->
 
-            val paths = mutableListOf<List<World>>()
+            val accessibleEntropy = GetAccessibleEntropyFromWorld(possibleNextWorld)
 
-            for(i in 0..SAMPLE_PATHS){
-
-                val newPath = mutableListOf<World>()
-                var nextWorld = getSetOfNextPossibleWorlds(possibleNextWorld, 1).get(0)
-
-                for(j in 0..STEPS){
-                    newPath.add(nextWorld)
-                    nextWorld = getSetOfNextPossibleWorlds(nextWorld, 1).get(0)
-                }
-
-                paths.add(newPath)
+            if(accessibleEntropy > lastEntropy){
+                println("BETTER ENTROPY: " + accessibleEntropy)
+                lastEntropy = accessibleEntropy
             }
 
-            val occurenceMap = mutableMapOf<World, Int>()
-            paths.forEach {
-                it.forEach {
-                    val currentCount = occurenceMap.get(it) ?: 0
-                    occurenceMap.put(it, currentCount +1)
-                }
-            }
-
-            val allWorldOccurences = occurenceMap.values.reduce { acc, i -> acc + i }
-
-            val entropyAvailable = -1 * occurenceMap.keys.fold(0.0){ acc, world ->
-
-                val probability = occurenceMap.get(world)!!.toDouble() / allWorldOccurences.toDouble()
-
-                acc + (probability * Math.log(probability))
-            }
-
-            println("ENTROPY: " + entropyAvailable + " unique worlds: " + occurenceMap.size + " allWorldOccurences: " + allWorldOccurences)
-
-            entropyAvailable
+            accessibleEntropy
         }
-
 
         return bestWorld
 
+    }
+
+    private fun GetAccessibleEntropyFromWorld(possibleNextWorld: World): Double {
+        val paths = mutableListOf<List<World>>()
+
+        for (i in 0..SAMPLE_PATHS) {
+
+            val newPath = mutableListOf<World>()
+            var nextWorld = getSetOfNextPossibleWorlds(possibleNextWorld, 1).get(0)
+
+            for (j in 0..STEPS) {
+                newPath.add(nextWorld)
+                nextWorld = getSetOfNextPossibleWorlds(nextWorld, 1).get(0)
+            }
+
+            paths.add(newPath)
+        }
+
+        val occurenceMap = mutableMapOf<World, Int>()
+        paths.forEach {
+            it.forEach {
+                val currentCount = occurenceMap.get(it) ?: 0
+                occurenceMap.put(it, currentCount + 1)
+            }
+        }
+
+        val allWorldOccurences = occurenceMap.values.reduce { acc, i -> acc + i }
+
+        val entropyAvailable = -1 * occurenceMap.keys.fold(0.0) { acc, world ->
+
+            val probability = occurenceMap.get(world)!!.toDouble() / allWorldOccurences.toDouble()
+
+            acc + (probability * Math.log(probability))
+        }
+
+        // println("ENTROPY: " + entropyAvailable + " unique worlds: " + occurenceMap.size + " allWorldOccurences: " + allWorldOccurences)
+
+        return entropyAvailable
     }
 
 
@@ -76,7 +88,7 @@ class GetNextWorldUseCase {
         val ant = world.ant
         val lastIndex = world.grid.lastIndex
 
-        val possibleWorlds = mutableListOf<World>()
+        val possibleWorlds = mutableListOf<World>(world)
 
         if(ant.x != 0){
             possibleWorlds.addAll(addAntMovement(ant.copy(x= ant.x - 1), world))

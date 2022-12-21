@@ -17,8 +17,8 @@ class GenerateWorldUsecase {
         return World(
             grid,
             Ant(
-                grid.size / 2,
-                grid.size / 2,
+                0,
+                0,
             )
         )
     }

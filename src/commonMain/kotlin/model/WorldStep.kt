@@ -1,7 +1,6 @@
 package model
 
 data class WorldStep(
-    val grid: List<List<Int>>,
-    val chaosAnts: List<Ant>,
-    val entropy: Int
+    val currentWorld: World,
+    val biases: Map<World, Double>
 )
