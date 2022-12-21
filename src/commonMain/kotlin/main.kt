@@ -84,8 +84,7 @@ class MyScene : Scene() {
             val xPos = (WIDTH / size) * lastWorld.ant.x + ((WIDTH / size) * 0.5)
             val yPos = (HEIGHT / size) * lastWorld.ant.y + ((HEIGHT / size) * 0.5)
             antEllipse.zIndex = 1.0
-            antEllipse.moveTo(xPos, yPos, time = 250.milliseconds)
-
+            antEllipse.tweenNoWait(antEllipse::x[xPos], antEllipse::y[yPos], time = 300.milliseconds)
 
             val movedColor = findSwappedPositions(referenceWorld.grid, lastWorld.grid)
 
@@ -100,21 +99,18 @@ class MyScene : Scene() {
                 val xPos = (WIDTH / size) * movedTo.first + ((WIDTH / size) * 0.5)
                 val yPos = (HEIGHT / size) * movedTo.second + ((HEIGHT / size) * 0.5)
                 ellipse.zIndex = 0.7
-                ellipse.moveTo(xPos, yPos)
+                ellipse.tweenNoWait(ellipse::x[xPos], ellipse::y[yPos], time = 300.milliseconds)
 
 
                 val swapWithEllipse = ellipseGrid[movedTo.first][movedTo.second]!!
                 val xPosSwapped = (WIDTH / size) * movedFrom.first + ((WIDTH / size) * 0.5)
                 val yPosSwapped = (HEIGHT / size) * movedFrom.second + ((HEIGHT / size) * 0.5)
                 swapWithEllipse.zIndex = 0.5
-                swapWithEllipse.moveTo(xPosSwapped, yPosSwapped)
+                swapWithEllipse.tweenNoWait(swapWithEllipse::x[xPosSwapped],swapWithEllipse::y[yPosSwapped], time = 300.milliseconds )
                 ellipseGrid[movedFrom.first][movedFrom.second] = swapWithEllipse
                 ellipseGrid[movedTo.first][movedTo.second] = ellipse
             }
-
-
-
-
+            delay(300.milliseconds)
         }
 	}
 
