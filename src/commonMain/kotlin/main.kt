@@ -24,127 +24,60 @@ class MyScene : Scene() {
 
 	override suspend fun SContainer.sceneMain() {
 
-        var world = GenerateWorldUsecase().execute(WorldRequest(
-            11,
-            listOf(Color.BLUE, Color.RED, Color.GREEN),
-            backgroundColor = Color.WHITE,
-            backgroundProminence = 0.7f
-        ))
+        val snakeWorldData = SnakeWorldRequest(
+            size = 20,
+            snakeColor = RGBA.Companion.invoke(155,155,155),
+            foodColor = RGBA.Companion.invoke(155,0,0),
+            backgroundColor = RGBA.Companion.invoke(255,255,255),
+        )
 
-        var lastWorld = world
+        val snakeWorld = GenerateSnakeWorldUsecase().execute(
+            snakeWorldData
+        )
 
-        val size = world.grid.size
-        val ant = world.ant
+        var lastWorld = snakeWorld
 
-        val ellipseGrid = Array( world.grid.size) {
-            Array<Ellipse?>( world.grid.size) {
-               null
-          }
-        }
+        val size = snakeWorld.worldSize
 
-        for (iblex in 0 until size){
-            for (j in 0 until size){
+		while (true) {
 
-                val ellipse: Ellipse = ellipse {
+            lastWorld = GetNextSnakeWorldUseCase().execute(lastWorld)
+
+            removeChildren()
+
+            // FOOD
+            ellipse {
+                radiusX = (WIDTH / (size * 2)).toDouble()
+                radiusY = (HEIGHT / (size * 2)).toDouble()
+
+                anchor(0.5, 0.5)
+                color = RGBA(snakeWorldData.foodColor)
+
+                val xPos = (WIDTH / size) * lastWorld.food.x + ((WIDTH / size) * 0.5)
+                val yPos = (HEIGHT / size) * lastWorld.food.y + ((HEIGHT / size) * 0.5)
+
+                position(xPos, yPos)
+            }
+
+            lastWorld.snake.body.forEachIndexed { index1, it ->
+                ellipse {
                     radiusX = (WIDTH / (size * 2)).toDouble()
                     radiusY = (HEIGHT / (size * 2)).toDouble()
 
                     anchor(0.5, 0.5)
-                    color = RGBA(world.grid[iblex][j])
+                    color = if(index1 == 0)
+                        RGBA(0,0,0)
+                    else RGBA(snakeWorldData.snakeColor)
 
-                    val xPos = (WIDTH / size) * iblex + ((WIDTH / size) * 0.5)
-                    val yPos = (HEIGHT / size) * j + ((HEIGHT / size) * 0.5)
+                    val xPos = (WIDTH / size) * it.x + ((WIDTH / size) * 0.5)
+                    val yPos = (HEIGHT / size) * it.y + ((HEIGHT / size) * 0.5)
 
                     position(xPos, yPos)
                 }
-
-                ellipseGrid[iblex][j] = ellipse
             }
-        }
 
-        val antEllipse = ellipse {
-            radiusX = (WIDTH / (size * 3)).toDouble()
-            radiusY = (HEIGHT / (size * 3)).toDouble()
-
-            anchor(0.5, 0.5)
-            color = RGBA(RGBA(0, 0, 0, 220))
-
-            val xPos = (WIDTH / size) * ant.x + ((WIDTH / size) * 0.5)
-            val yPos = (HEIGHT / size) * ant.y + ((HEIGHT / size) * 0.5)
-
-            position(xPos, yPos)
-        }
-
-
-		while (true) {
-            val referenceWorld = lastWorld.copy()
-
-            lastWorld = GetNextWorldUseCase().execute(lastWorld)
-
-            val xPos = (WIDTH / size) * lastWorld.ant.x + ((WIDTH / size) * 0.5)
-            val yPos = (HEIGHT / size) * lastWorld.ant.y + ((HEIGHT / size) * 0.5)
-            antEllipse.zIndex = 1.0
-            antEllipse.tweenNoWait(antEllipse::x[xPos], antEllipse::y[yPos], time = 300.milliseconds)
-
-            val movedColor = findSwappedPositions(referenceWorld.grid, lastWorld.grid)
-
-            if(movedColor != null){
-
-                val movedFrom = movedColor.first
-                val movedTo = movedColor.second
-
-                println(movedFrom.toString() + " to " + movedTo.toString())
-
-                val ellipse = ellipseGrid[movedFrom.first][movedFrom.second]!!
-                val xPos = (WIDTH / size) * movedTo.first + ((WIDTH / size) * 0.5)
-                val yPos = (HEIGHT / size) * movedTo.second + ((HEIGHT / size) * 0.5)
-                ellipse.zIndex = 0.7
-                ellipse.tweenNoWait(ellipse::x[xPos], ellipse::y[yPos], time = 300.milliseconds)
-
-
-                val swapWithEllipse = ellipseGrid[movedTo.first][movedTo.second]!!
-                val xPosSwapped = (WIDTH / size) * movedFrom.first + ((WIDTH / size) * 0.5)
-                val yPosSwapped = (HEIGHT / size) * movedFrom.second + ((HEIGHT / size) * 0.5)
-                swapWithEllipse.zIndex = 0.5
-                swapWithEllipse.tweenNoWait(swapWithEllipse::x[xPosSwapped],swapWithEllipse::y[yPosSwapped], time = 300.milliseconds )
-                ellipseGrid[movedFrom.first][movedFrom.second] = swapWithEllipse
-                ellipseGrid[movedTo.first][movedTo.second] = ellipse
-            }
-            delay(300.milliseconds)
+            delay(200.milliseconds)
         }
 	}
-
-    fun findSwappedPositions(grid1: List<List<Int>>, grid2: List<List<Int>>): Pair<Pair<Int, Int>, Pair<Int, Int>>? {
-        val rows = grid1.size
-        val cols = grid1[0].size
-
-        for (i in 0 until rows) {
-            for (j in 0 until cols) {
-                if (grid1[i][j] != grid2[i][j]) {
-                    // Check if any adjacent integers in the first grid have been swapped with each other in the second grid
-                    if (j < cols - 1 && grid1[i][j + 1] == grid2[i][j] && grid1[i][j] == grid2[i][j + 1]) {
-                        return Pair(Pair(i, j), Pair(i, j + 1))
-                    }
-                    if (i < rows - 1 && grid1[i + 1][j] == grid2[i][j] && grid1[i][j] == grid2[i + 1][j]) {
-                        return Pair(Pair(i, j), Pair(i + 1, j))
-                    }
-
-                    var swappedX = 0
-                    var swappedY = 0
-                    for (k in 0 until rows) {
-                        for (l in 0 until cols) {
-                            if (grid1[i][j] == grid2[k][l]) {
-                                swappedX = k
-                                swappedY = l
-                            }
-                        }
-                    }
-                    return Pair(Pair(i, j), Pair(swappedX, swappedY))
-                }
-            }
-        }
-
-        return null
-    }
 
 }

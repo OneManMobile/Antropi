@@ -3,6 +3,8 @@ package usecase
 import ComplexityService
 import GetPossibleNextWorldsUseCase
 import model.*
+import java.lang.Integer.max
+import java.lang.Integer.min
 import kotlin.random.*
 
 class GetNextWorldUseCase {
@@ -60,26 +62,12 @@ class GetNextWorldUseCase {
             paths.add(newPath)
         }
 
-        val occurenceMap = mutableMapOf<World, Int>()
-        paths.forEach {
-            it.forEach {
-                val currentCount = occurenceMap.get(it) ?: 0
-                occurenceMap.put(it, currentCount + 1)
-            }
+        val entropy = paths.map {  it.map { it.grid } }.map {calculatePermutationEntropy(it, 3) }.fold(0.0){ acc: Double, num: List<Double> ->
+            acc + num.reduce { acc, d -> acc+d }
         }
-
-        val allWorldOccurences = occurenceMap.values.reduce { acc, i -> acc + i }
-
-        val entropyAvailable = -1 * occurenceMap.keys.fold(0.0) { acc, world ->
-
-            val probability = occurenceMap.get(world)!!.toDouble() / allWorldOccurences.toDouble()
-
-            acc + (probability * Math.log(probability))
-        }
-
         // println("ENTROPY: " + entropyAvailable + " unique worlds: " + occurenceMap.size + " allWorldOccurences: " + allWorldOccurences)
 
-        return entropyAvailable
+        return entropy
     }
 
 
@@ -123,7 +111,62 @@ class GetNextWorldUseCase {
         )
     }
 
+    fun calculatePermutationEntropy(grids: List<List<List<Int>>>, permutationLength: Int): List<Double> {
+        // Initialize a list to store the permutation entropies of the grids
+        val entropies = mutableListOf<Double>()
 
+        // Iterate through the list of grids
+        for (grid in grids) {
+            // Initialize a map that maps each permutation to the number of times it appears in the grid
+            val counts = mutableMapOf<List<Int>, Int>()
+
+            // Iterate through the grid and extract the permutations
+            for (row in 0 until grid.size) {
+                for (col in 0 until grid[0].size) {
+                    // Calculate the start and end indices of the window
+                    val startRow = max(0, row - permutationLength / 2)
+                    val endRow = min(grid.size, row + permutationLength / 2 + 1)
+                    val startCol = max(0, col - permutationLength / 2)
+                    val endCol = min(grid[0].size, col + permutationLength / 2 + 1)
+
+                    // Extract the window of integers
+                    val window = mutableListOf<Int>()
+                    for (r in startRow until endRow) {
+                        for (c in startCol until endCol) {
+                            window.add(grid[r][c])
+                        }
+                    }
+
+                    // Calculate the permutation of the integers in the window
+                    val permutation = window.sorted()
+
+                    // Update the count for this permutation
+                    counts[permutation] = counts.getOrDefault(permutation, 0) + 1
+                }
+            }
+
+            // Calculate the total number of permutations in the grid
+            val total = counts.values.sum().toDouble()
+
+            // Initialize the permutation entropy to zero
+            var entropy = 0.0
+
+            // Iterate through the map and calculate the permutation entropy for each permutation
+            for ((permutation, count) in counts) {
+                // Calculate the probability of occurrence for this permutation
+                val probability = count / total
+
+                // Calculate the permutation entropy for this permutation
+                entropy += -probability * kotlin.math.ln(probability)
+            }
+
+            // Add the permutation entropy of the grid to the list
+            entropies.add(entropy)
+        }
+
+        // Return the list of permutation entropies
+        return entropies
+    }
 
 
 }
