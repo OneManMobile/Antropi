@@ -25,7 +25,7 @@ class MyScene : Scene() {
 	override suspend fun SContainer.sceneMain() {
 
         val snakeWorldData = SnakeWorldRequest(
-            size = 20,
+            size = 50,
             snakeColor = RGBA.Companion.invoke(155,155,155),
             foodColor = RGBA.Companion.invoke(155,0,0),
             backgroundColor = RGBA.Companion.invoke(255,255,255),

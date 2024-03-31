@@ -6,8 +6,8 @@ import kotlin.math.*
 class GetNextSnakeWorldUseCase {
 
     companion object{
-        const val SAMPLE_PATHS = 100
-        const val STEPS = 200
+        const val SAMPLE_PATHS = 200
+        const val STEPS = 500
         const val HUNGER = 100
 
         var lastEntropy = 0.0
