@@ -1,7 +1,5 @@
 package blocks.model
 
-import java.lang.Math.sqrt
-
 /**
  * A graph where:
  *
@@ -9,7 +7,7 @@ import java.lang.Math.sqrt
  * 2. The edges define how its possible to travel from a Node to another. No duplication of edges
  * 3. Each node also has two calculatable features: The amount of accessible nodes from this node and the amount of leaves from this node. Any node that leads to a cyclical path back to the origin node, only counts as 1 accessible node for the origin node.
  */
-class MoveGraph {
+class WorldGraph {
     private val nodes = mutableMapOf<Int, NodeMetadata>() // Keyed by the hash of the Set<Block>
     private val edges = mutableMapOf<Int, MutableSet<Int>>() // Keyed by the hash of the Set<Block>
 
