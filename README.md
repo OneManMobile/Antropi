@@ -12,6 +12,19 @@ Maybe it makes sense to have a system with multiple intelligence agents running 
 
 Lets see where it goes!
 
+## IDEAS
+
+What about a system of Ants, where each has a Baysian Network that can observe within their field of vision?
+
+Each Ant comes with insticts? How does it know to gather food otherwise?
+
+A
+
+Ant properties:
+1. Ants move on a grid
+2. An Ant leaves footprints?
+
+
 ### ENGINE
 
 The project uses Korge, a Kotlin game engine for rendering.

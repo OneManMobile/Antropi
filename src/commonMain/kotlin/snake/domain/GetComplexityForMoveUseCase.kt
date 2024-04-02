@@ -1,5 +1,5 @@
-
-import model.*
+package snake.domain
+import snake.model.*
 
 class GetComplexityForMoveUseCase {
 

@@ -1,11 +1,8 @@
-package usecase
+package snake.usecase
 
-import ComplexityService
-import GetPossibleNextWorldsUseCase
-import model.*
+import snake.model.*
 import java.lang.Integer.max
 import java.lang.Integer.min
-import kotlin.random.*
 
 class GetNextWorldUseCase {
 
@@ -26,7 +23,7 @@ class GetNextWorldUseCase {
      * 3. From those moves, determine the move that allows maximum access to future entropy
      * 4. Determine maximum access by: Moving ChaosAnt
      */
-    fun execute(input: World): World{
+    fun execute(input: World): World {
 
         // given step t+1, what is the access to entropy at Tau
 

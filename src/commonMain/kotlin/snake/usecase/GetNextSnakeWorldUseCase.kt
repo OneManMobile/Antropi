@@ -1,6 +1,7 @@
-package usecase
+package snake.usecase
 
 import model.*
+import snake.model.*
 import kotlin.math.*
 
 class GetNextSnakeWorldUseCase {
@@ -23,7 +24,7 @@ class GetNextSnakeWorldUseCase {
      * 3. From those moves, determine the move that allows maximum access to future entropy
      * 4. Determine maximum access by: Moving ChaosAnt
      */
-    fun execute(input: SnakeWorld): SnakeWorld{
+    fun execute(input: SnakeWorld): SnakeWorld {
 
         val possibleNextWorlds = getListOfNextPossibleSnakeWorlds(input)
 

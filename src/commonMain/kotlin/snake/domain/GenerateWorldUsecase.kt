@@ -1,9 +1,11 @@
-import model.*
+package snake.domain
+
+import snake.model.*
 import kotlin.random.*
 
 class GenerateWorldUsecase {
 
-    fun execute(input: WorldRequest): World{
+    fun execute(input: WorldRequest): World {
 
         val grid = Array(input.size) {
             IntArray(input.size) {

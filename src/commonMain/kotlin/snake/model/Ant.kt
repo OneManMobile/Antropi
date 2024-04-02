@@ -1,4 +1,4 @@
-package model
+package snake.model
 
 /**
  * An Ant can move around freely on the grid, and it can choose to carry the color it stand on

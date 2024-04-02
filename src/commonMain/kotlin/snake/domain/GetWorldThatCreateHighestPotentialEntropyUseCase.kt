@@ -1,5 +1,5 @@
-
-import model.*
+package snake.domain
+import snake.model.*
 import kotlin.random.*
 
 class GetWorldThatCreateHighestPotentialEntropyUseCase {
@@ -17,7 +17,7 @@ class GetWorldThatCreateHighestPotentialEntropyUseCase {
      * 4. In other words, choose the next world which allows maximum future entropy generation
      * 5. Define Maximum future entropy generation as the maximum average entropy across all end-paths within reach from the next step
      */
-    fun execute(input: WorldOld): WorldOld{
+    fun execute(input: WorldOld): WorldOld {
 
         val nextMoves = getPossibleNextWorldsUseCase.execute(input)
 

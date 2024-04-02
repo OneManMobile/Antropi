@@ -1,5 +1,5 @@
-
-import model.*
+package snake.domain
+import snake.model.*
 
 class GetMovesThatCreateHighestComplexityUseCaseOld {
 
@@ -15,7 +15,7 @@ class GetMovesThatCreateHighestComplexityUseCaseOld {
         val endComplexity: Int
     )
 
-    fun execute(input: WorldOld): Moves{
+    fun execute(input: WorldOld): Moves {
 
         val getMoves = getMoves(input, REACH)
 

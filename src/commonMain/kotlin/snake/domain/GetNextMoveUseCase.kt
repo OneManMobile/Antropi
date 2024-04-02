@@ -1,10 +1,12 @@
-import model.*
+package snake.domain
+
+import snake.model.*
 
 class GetNextMoveUseCase {
 
     val getPossibleNextWorldsUseCase = GetPossibleNextWorldsUseCase()
 
-    fun execute(input: WorldOld): WorldOld{
+    fun execute(input: WorldOld): WorldOld {
 
         val worldStates = getPossibleNextWorldsUseCase.execute(input)
 

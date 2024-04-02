@@ -1,3 +1,5 @@
+package snake.domain
+
 import java.util.zip.*
 
 class ComplexityService {

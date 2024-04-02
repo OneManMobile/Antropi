@@ -1,9 +1,12 @@
+package snake.domain
+
 import model.*
+import snake.model.*
 import kotlin.random.*
 
 class GenerateSnakeWorldUsecase {
 
-    fun execute(input: SnakeWorldRequest): SnakeWorld{
+    fun execute(input: SnakeWorldRequest): SnakeWorld {
 
         val snakeHead = BodyPoint(x = Random.nextInt(input.size), y = Random.nextInt(input.size))
 

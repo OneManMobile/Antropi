@@ -1,4 +1,4 @@
-package model
+package snake.model
 
 class WorldTransformer {
 
@@ -16,7 +16,7 @@ class WorldTransformer {
             Direction.Left ->  oldAnt.copy(
                 x = oldAnt.x -1
             )
-            Direction.Right  ->  oldAnt.copy(
+            Direction.Right ->  oldAnt.copy(
                 x = oldAnt.x +1
             )
             Direction.Up ->  oldAnt.copy(
