@@ -1,16 +1,17 @@
 package blocks.domain
 
 import blocks.model.*
-import blocks.model.WorldTransformer
-import snake.model.*
+import blocks.model.WorldExplorer
 
 class GetPossibleNextWorldsUseCase {
 
-    val worldTransformer = WorldTransformer()
+    val worldTransformer = WorldExplorer()
 
      fun execute(oldWorld: Set<Block>): Set<Set<Block>> {
 
-        TODO()
+        val possibleWorlds = worldTransformer.getPossibleNextStates(oldWorld)
+
+         return possibleWorlds
     }
 
 }

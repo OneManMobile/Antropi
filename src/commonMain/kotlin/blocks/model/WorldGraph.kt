@@ -29,15 +29,18 @@ class WorldGraph {
         }
         fromEdges.add(toHash)
 
-        recalculateScores()
         return true
     }
 
-    private fun recalculateScores() {
-        // Reset scores before recalculating
-        nodes.values.forEach { it.accessibleNodes = 0; it.leafNodes = 0 }
+    fun recalculateScoresFor(possibleNodes: List<Int>) {
+        possibleNodes.forEach {
+            nodes.get(it)?.apply {
+                accessibleNodes = 0
+                leafNodes = 0
+            }
+        }
 
-        nodes.keys.forEach { nodeHash ->
+        possibleNodes.forEach { nodeHash ->
             val visited = mutableSetOf<Int>()
             val leaves = mutableSetOf<Int>()
             depthFirstSearch(nodeHash, visited, leaves, nodeHash)
